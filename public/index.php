@@ -49,8 +49,10 @@ $app = require_once __DIR__.'/../bootstrap/app.php';
 */
 
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
- // header('Content-Type: application/json', true);
+header('Content-Type: application/json', true);
 header('Accept: application/json', true);
+header('Access-Control-Allow-Origin: *');
+
 $response = $kernel->handle(
     $request = Illuminate\Http\Request::capture()
 );

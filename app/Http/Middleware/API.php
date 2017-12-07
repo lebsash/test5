@@ -1,6 +1,8 @@
 <?php
 namespace App\Http\Middleware;
 use Closure;
+use Symfony\Component\HttpFoundation\HeaderBag;
+
 class API
 {
     /**
@@ -12,22 +14,26 @@ class API
      */
     public function handle($request, Closure $next)
     {
-        $response = $next($request);
-        // CORS
-        if (env('CORS_ENABLE', false)) {
-            $origin = array_key_exists('HTTP_ORIGIN', $_SERVER) ? $_SERVER['HTTP_ORIGIN'] : '*';
-            $credentials = ($origin == '*') ? 'false' : 'true';
-            $response->headers->set('Access-Control-Allow-Origin' , $origin);
-            $response->headers->set('Access-Control-Allow-Credentials', $credentials);
-            $response->headers->set('Access-Control-Allow-Methods', 'POST, GET, OPTIONS, PUT, DELETE');
-            $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Accept, Authorization, X-Requested-With');
-        }
+        //$response = $next($request);
+
+        
         // API content type
         $content_type = env('API_CONTENT_TYPE', false);
 
-        if ($content_type)
-            $response->headers->set('content-type', $content_type);
-        $response->header('Content-Type', 'application/json');
-        return $response;
+        if ($content_type) {
+            
+            $request->headers->set('Content-Type', $content_type);
+
+        }
+        
+        $request->server->set('HTTP_ACCEPT', 'application/json');
+        $request->headers->set('Accept', 'application/json');
+        $request->headers = new HeaderBag($request->server->getHeaders());
+
+
+
+
+        return $next($request);
+        //return $response;
     }
 }

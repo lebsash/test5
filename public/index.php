@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  * Laravel - A PHP Framework For Web Artisans
  *
@@ -48,7 +49,8 @@ $app = require_once __DIR__.'/../bootstrap/app.php';
 */
 
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
-
+ // header('Content-Type: application/json', true);
+header('Accept: application/json', true);
 $response = $kernel->handle(
     $request = Illuminate\Http\Request::capture()
 );

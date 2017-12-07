@@ -1,51 +1,92 @@
-<p align="center"><img src="https://laravel.com/assets/img/components/logo-laravel.svg"></p>
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/d/total.svg" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/v/stable.svg" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License"></a>
-</p>
+<h2>Тест</h2>
 
-## About Laravel
+## Задача
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as:
+# Задача спроектировать и реализовать REST API для клиента SPA-фронта (клиент не разрабатываем)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Данные аналитики
+Организация, для которой мы делаем приложение оказывает услуги на мелкие разовые работы по догвороам заказчикам. 
+Заказчиков (потенциальных заказчиков) очень много, и первое что нужно сделать это спискок заказчиков с указанием
+заключали ли они договоры. В дальнейшем система будет развиваться, но сейчас надо показать первую страницу.
+Заказчик передал нам csv файлы из своей прошлой системы, где указаны их сущности
+1. Заказчик-юридическое лицо - записей в файле пара сотен тысяч со своим набором полей (name, mainBankAccount, postAddress, registrationAddress )
+2. Заказчик-физическое лицо - записей в файле ок миллиона со своим набором полей (name, surname, patronimic, bankAccount, livingAddress)
+3. Договор (в каждом договоре может быть несколько разных услуг, каждый заказчик может иметь много договоров) колонки: number, state, dateStart, dateEnd
+4. ТипУслуги (например, уборка офиса, мытье окон, ремонт кондиционера и прочее )
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb combination of simplicity, elegance, and innovation give you tools you need to build any application with which you are tasked.
 
-## Learning Laravel
+## Дизайнер отрисовал необходимую страницу:
+список по всем заказчикам с поиском (по всем трем колонкам) и пагинацией в три колонки:
+--------------------------------------------------------------------------------------------------------------------------------
+| Наименование юрлица/фамилия физлица  > | Номера неоплаченных договоров через запятую | Количество услуг по оплаченным договорам |
+--------------------------------------------------------------------------------------------------------------------------------
+| Иванов                                 | №№ 3456FG? 43985GH, 456789АВ                | 3                                        |
+--------------------------------------------------------------------------------------------------------------------------------
+| Ивановская фабрика                     | нет договров                                | -                                        |
+--------------------------------------------------------------------------------------------------------------------------------
+по клику на строку открывается нужная карточка заказчика с возможностью редактировать 
+----------------------------------
+| Иванов                          |
+----------------------------------
+|                                 |
+| Фамилия Иванов                  |
+| Имя Иван                        |
+...                               |
+----------------------------------
+или
+----------------------------------
+| Ивановская фабрика              |
+----------------------------------
+|                                 |
+| Наименование Ивановская фабрика |
+| Почтовый адрес Москва, Ленина, 1|
+...                               |
+----------------------------------
 
-Laravel has the most extensive and thorough documentation and video tutorial library of any modern web application framework. The [Laravel documentation](https://laravel.com/docs) is thorough, complete, and makes it a breeze to get started learning the framework.
+PS: Данные от заказчика наполнять не надо
 
-If you're not in the mood to read, [Laracasts](https://laracasts.com) contains over 900 video tutorials on a range of topics including Laravel, modern PHP, unit testing, JavaScript, and more. Boost the skill level of yourself and your entire team by digging into our comprehensive video library.
 
-## Laravel Sponsors
+## РЕЗУЛЬТАТ
 
-We would like to extend our thanks to the following sponsors for helping fund on-going Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](http://patreon.com/taylorotwell):
+Рабочий вариант доступен по следующим ссылкам
 
-- **[Vehikl](http://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[British Software Development](https://www.britishsoftware.co)**
-- **[Styde](https://styde.net)**
-- [Fragrantica](https://www.fragrantica.com)
-- [SOFTonSOFA](https://softonsofa.com/)
+# GET запрос на отображение информации
+**(http://test5.agency911.org/api/getlist?searchOnName=w&searchOnContr=w&page=2&onpage=6)**
 
-## Contributing
+Обязательные поля: 
+- page   - Текущая страница пагинации
+- onpage - Количество строк на странице для пагинации
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
+Допустимые значения в запросе GET: 
+-	searchOnName  - текст для поиска в в наименовании клиента
+-	searchOnContr - текст для поиска среди номеров неоплаченных договоров (2й столбец выборки)
 
-## Security Vulnerabilities
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+# GET запрос на отображение инфоримации о клиенте
+** http://test5.agency911.org/api/client?UID=1 **
+Обязательный параметр: 
+- UID - Идентификатор пользователя из таблицы cat. Данный идентификатор содержится в ответе на запрос 
+отображения полной информации.
 
-## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+# GET запрос на редактирование инфоримации о клиенте
+** http://test5.agency911.org/api/clientmod?UID=1&STATUS=FL&name=%27Weissnat,%20Bernhard%20and%20Orn1%27 **
+Обязательный параметр: 
+- UID - Идентификатор пользователя из таблицы cat. Данный идентификатор содержится в ответе на запрос 
+отображения полной информации.
+Допустимые параметры
+Для физлиц:
+- name 
+- surname
+- patronimic
+- BankAccount
+- livingAddress
+
+Для юрлиц:
+- name 
+- mainBankAccount
+- postAddress 
+- registrationAddress
+
+В ответ на данный запрос возвращается информация о пользователе в обновленном виде

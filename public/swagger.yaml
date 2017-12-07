@@ -1,0 +1,140 @@
+swagger: '2.0'
+info:
+  description: Решение тестового задания №5
+  version: 1.0.0
+  title: Тестовое задание
+  contact:
+    email: lebsash@mail.ru
+host: test5.agency911.org
+basePath: /api
+tags:
+  - name: getlist
+    description: Получение списка клиентов в соответствии с условием выборки
+  - name: client
+    description: Операции с клиентами
+schemes:
+  - http
+paths:
+  /getlist:
+    get:
+      tags:
+        - Getlist
+      summary: Получение основного списка
+      description: Получение списка пользователей в соответствии с условиями выборки
+      operationId: Getlist
+      parameters:
+        - name: page
+          in: query
+          description: Текущая страница пагинации
+          required: true
+          type: integer
+          format: int64
+        - name: onpage
+          in: query
+          description: Настройка пагинатора - кол-во записей на одной странице
+          required: true
+          type: integer
+          format: int64
+        - name: searchOnName
+          in: query
+          description: Строка поиска по полю наименования клиента
+          required: false
+          type: string
+          format: string
+        - name: searchOnContr
+          in: query
+          description: Строка поиска по полю номера неоплаченного договора клиента
+          required: false
+          type: string
+          format: string
+      responses:
+        '200':
+          description: Ok
+        '405':
+          description: Invalid input
+  /client:
+    get:
+      tags:
+        - client
+      summary: Информация о клиенте
+      description: Получение подробной информации о клиенте
+      operationId: client
+      parameters:
+        - name: UID
+          in: query
+          description: Идентификатор клиента
+          required: true
+          type: integer
+          format: int64
+      responses:
+        '200':
+          description: Ok
+        '404':
+          description: Invalid input
+  /clientmod:
+    get:
+      tags:
+        - client
+      summary: Сохранение новой информации о клиенте
+      description: Редактирование информации о клиенте
+      operationId: clientmod
+      parameters:
+        - name: UID
+          in: query
+          description: Идентификатор клиента
+          required: true
+          type: integer
+          format: int64
+        - name: name
+          in: query
+          description: Имя физлица либо наименование юридического лица
+          required: false
+          type: string
+          format: string
+        - name: surname
+          in: query
+          description: Фамилия
+          required: false
+          type: string
+          format: string
+        - name: patronimic
+          in: query
+          description: Отчество
+          required: false
+          type: string
+          format: string
+        - name: BankAccount
+          in: query
+          description: Банковский счет физлица
+          required: false
+          type: string
+          format: string
+        - name: livingAddress
+          in: query
+          description: Адрес физлица
+          required: false
+          type: string
+          format: string
+        - name: mainBankAccount
+          in: query
+          description: Банковский счет Юрлица
+          required: false
+          type: string
+          format: string
+        - name: postAddress
+          in: query
+          description: Адрес почты Юрлица
+          required: false
+          type: string
+          format: string
+        - name: registrationAddress
+          in: query
+          description: Адрес регистрации Юрлица
+          required: false
+          type: string
+          format: string
+      responses:
+        '200':
+          description: Ok
+        '404':
+          description: Invalid input
